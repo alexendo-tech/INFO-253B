@@ -1,127 +1,95 @@
-# Week 2 In-Class Project: Student Records API
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/-_fv0CGp)
+# Password Security Tool - Lab
 
-Build Python functions that manage student records. These functions follow the exact pattern you'll use with Flask next week!
+Build a password strength checker and password generator using Python fundamentals.
 
-## Getting Started
+## 📝 Your Tasks
 
-```bash
-# Clone this repository
-git clone <your-repo-url>
+### TODO 1: Password Strength Checker
 
-# Navigate to the cloned folder
-cd in-class-exploration-week-2-<your-username>
+Implement `check_password_strength(password)` that analyzes a password and returns a strength score.
 
-# Open in your editor
-code .
+**Scoring rubric:**
+- 8+ characters: 20 points
+- 12+ characters: 30 points (replaces the 20)
+- Has number: 20 points
+- Has uppercase: 20 points
+- Has lowercase: 20 points
+- Has special char: 20 points
+- Not common: 10 points
 
-# Run tests to see what needs to be implemented
-python test_records.py
-```
-
-## Your Task
-
-Implement the functions in `student_records.py`. Each function is marked with a `TODO` comment.
-
-### Data Structure
-
-Students are stored as dictionaries with these fields:
-
+**Return format:**
 ```python
 {
-    "id": 1,
-    "name": "Alice Smith",
-    "email": "alice@berkeley.edu",
-    "major": "Data Science"
+    "password": "Hello123!",
+    "score": 90,
+    "strength": "Strong"  # "Weak" (0-39), "Medium" (40-69), "Strong" (70-100)
 }
 ```
 
-### Functions to Implement
+### TODO 2: Password Generator
 
-| Function | Description | Returns |
-|----------|-------------|---------|
-| `list_students()` | Get all students | `{"students": [...], "total": N}` |
-| `get_student(id)` | Get one student by ID | `(student_dict, 200)` or `(error, 404)` |
-| `add_student(data)` | Create a new student | `(student_dict, 201)` or `(error, 400)` |
-| `update_student(id, data)` | Update existing student | `(student_dict, 200)` or `(error, 404)` |
-| `delete_student(id)` | Remove a student | `(message, 200)` or `(error, 404)` |
+Implement `generate_password(length=12, use_special=True)` that creates a random secure password.
 
-### Response Pattern
+**Requirements:**
+- Include uppercase, lowercase, and numbers
+- Include special characters if `use_special=True`
+- Minimum length of 8 characters
+- Must actually contain all required character types!
 
-All functions that can fail return a tuple of `(data, status_code)`:
+## 🚀 Getting Started
 
-```python
-# Success
-return {"id": 1, "name": "Alice"}, 200
+1. Open `password_tool.py`
+2. Complete TODO 1 (password checker)
+3. Quick check: `python password_tool.py`
+4. Complete TODO 2 (password generator)
+5. Quick check: `python password_tool.py`
+6. Run full tests: `python test_password_tool.py`
 
-# Not found
-return {"error": "Student not found"}, 404
+## 💡 Hints
 
-# Bad request
-return {"error": "Missing required field: name"}, 400
-```
+### For TODO 1:
+- Use string methods: `char.isdigit()`, `char.isupper()`, `char.islower()`
+- Check special chars: `char in string.punctuation`
+- Loop through password or use `any()`
 
-## Checkpoints
+### For TODO 2:
+- Character sets: `string.ascii_uppercase`, `string.ascii_lowercase`, `string.digits`
+- Random selection: `random.choice(chars)`
+- Think about: How do you guarantee each type is included?
 
-Use these time targets to pace yourself:
+## ✅ Testing Your Code
 
-| Time | Checkpoint |
-|------|------------|
-| 0-10 min | Implement `list_students()` and `get_student()` |
-| 10-20 min | Implement `add_student()` with validation |
-| 20-30 min | Implement `update_student()` and `delete_student()` |
-| 30-40 min | Create a `Student` class with `to_dict()` (optional) |
-| 40-45 min | Add custom features, run all tests |
-
-## Running Tests
-
+**Quick check (during development):**
 ```bash
-python test_records.py
+python password_tool.py
+```
+This shows if your functions are implemented and return the correct types.
+
+**Full test suite (when complete):**
+```bash
+python test_password_tool.py
 ```
 
-The test script will show which functions pass and which need work.
+You should see:
+```
+✓ Test 1: Basic scoring
+✓ Test 2: Weak password detection
+✓ Test 3: Common password detection
+✓ Test 4: Strong password detection
+✓ Test 5: Generator length
+✓ Test 6: Generator character types
+✓ Test 7: Generated passwords are strong
 
-## Tips
+Results: 7 passed, 0 failed
+🎉 All tests passed! Great work!
+```
 
-1. **Start simple:** Get the basic version working, then add validation
-2. **Use `.get()`:** Safely access dictionary keys: `students.get(id)` returns `None` if not found
-3. **Check tests often:** Run tests after each function to verify
-4. **Read the error messages:** Python's error messages tell you exactly what's wrong
+## 🎓 Submission
 
-## Common Issues
+1. Complete both TODO 1 and TODO 2
+2. Ensure `python test_password_tool.py` passes all tests
+3. Commit and push your code
+4. Submit your repository link on bCourses
 
-| Issue | Solution |
-|-------|----------|
-| `KeyError` | Use `.get()` instead of direct access, or check if key exists |
-| `TypeError: 'NoneType'` | You're accessing something that's `None` - add a check |
-| Test says "not implemented" | You have a `pass` or `TODO` still in the function |
-
-## Extensions (if you finish early)
-
-1. Add a `search_students(query)` function that finds students by name
-2. Add validation for email format (must contain `@`)
-3. Add a `major` filter to `list_students()`
-4. Implement the `Student` class with validation in `__init__`
-
-## Submitting
-
-At **10:45 AM PST**, the instructor will ask you to:
-
-1. **Commit** everything you have (even if incomplete):
-   ```bash
-   git add .
-   git commit -m "In-class exploration submission"
-   ```
-
-2. **Push** to your repository:
-   ```bash
-   git push
-   ```
-
-3. **Submit on bCourses**: Go to the In-Class Exploration assignment and submit the URL to your GitHub repository homepage. It should look something like:
-   ```
-   https://github.com/UCB-INFO-BACKEND-WEBARCH/in-class-exploration-week-2-yourusername
-   ```
-
-**Remember:** This is graded Pass/No Pass on engagement, not correctness! The instructor is just looking for evidence that you actually worked on this for the past 30+ minutes.
-
-**Want to keep working?** Feel free to continue after submitting! Just commit and push your additional changes whenever you're done.
+Good luck!
