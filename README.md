@@ -1,95 +1,148 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/-_fv0CGp)
-# Password Security Tool - Lab
+# Week 3 In-Class Exploration: Student Records Flask API
 
-Build a password strength checker and password generator using Python fundamentals.
+Build a Flask API for student records. This is the same data structure from Week 2 - now as a real HTTP API!
 
-## 📝 Your Tasks
+## The Transformation
 
-### TODO 1: Password Strength Checker
+Remember Week 2? You wrote functions like this:
 
-Implement `check_password_strength(password)` that analyzes a password and returns a strength score.
+```python
+def get_student(student_id):
+    student = students.get(student_id)
+    if student is None:
+        return {"error": "Student not found"}, 404
+    return student, 200
+```
 
-**Scoring rubric:**
-- 8+ characters: 20 points
-- 12+ characters: 30 points (replaces the 20)
-- Has number: 20 points
-- Has uppercase: 20 points
-- Has lowercase: 20 points
-- Has special char: 20 points
-- Not common: 10 points
+This week, you add ONE line to make it a real API:
 
-**Return format:**
+```python
+@app.get('/students/<int:student_id>')
+def get_student(student_id):
+    student = students.get(student_id)
+    if student is None:
+        return {"error": "Student not found"}, 404
+    return student, 200
+```
+
+**The function body is IDENTICAL!**
+
+## Getting Started
+
+```bash
+# Clone this repository
+git clone <your-repo-url>
+cd in-class-exploration-week-3-<your-username>
+
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the app
+flask run
+```
+
+## Your Task
+
+Implement the endpoints in `app.py`. Each one is marked with a `TODO` comment.
+
+### Data Structure
+
+Students are stored as dictionaries (same as Week 2!):
+
 ```python
 {
-    "password": "Hello123!",
-    "score": 90,
-    "strength": "Strong"  # "Weak" (0-39), "Medium" (40-69), "Strong" (70-100)
+    "id": 1,
+    "name": "Alice Smith",
+    "email": "alice@berkeley.edu",
+    "major": "Data Science"
 }
 ```
 
-### TODO 2: Password Generator
+### Endpoints to Implement
 
-Implement `generate_password(length=12, use_special=True)` that creates a random secure password.
+| Endpoint | Method | Description | Success | Error |
+|----------|--------|-------------|---------|-------|
+| `/students` | GET | List all students | `{"students": [...], "total": N}` | - |
+| `/students/<id>` | GET | Get one student | student dict, 200 | `{"error": "..."}`, 404 |
+| `/students` | POST | Create a student | new student, 201 | `{"error": "..."}`, 400 |
+| `/students/<id>` | PUT | Update a student | updated student, 200 | `{"error": "..."}`, 404 |
+| `/students/<id>` | DELETE | Delete a student | `{"message": "..."}`, 200 | `{"error": "..."}`, 404 |
 
-**Requirements:**
-- Include uppercase, lowercase, and numbers
-- Include special characters if `use_special=True`
-- Minimum length of 8 characters
-- Must actually contain all required character types!
+### Testing Your API
 
-## 🚀 Getting Started
+Use the commands in `test-commands.sh` or run them manually:
 
-1. Open `password_tool.py`
-2. Complete TODO 1 (password checker)
-3. Quick check: `python password_tool.py`
-4. Complete TODO 2 (password generator)
-5. Quick check: `python password_tool.py`
-6. Run full tests: `python test_password_tool.py`
-
-## 💡 Hints
-
-### For TODO 1:
-- Use string methods: `char.isdigit()`, `char.isupper()`, `char.islower()`
-- Check special chars: `char in string.punctuation`
-- Loop through password or use `any()`
-
-### For TODO 2:
-- Character sets: `string.ascii_uppercase`, `string.ascii_lowercase`, `string.digits`
-- Random selection: `random.choice(chars)`
-- Think about: How do you guarantee each type is included?
-
-## ✅ Testing Your Code
-
-**Quick check (during development):**
 ```bash
-python password_tool.py
-```
-This shows if your functions are implemented and return the correct types.
+# GET all students
+curl http://localhost:5000/students
 
-**Full test suite (when complete):**
+# GET one student
+curl http://localhost:5000/students/1
+
+# POST new student
+curl -X POST http://localhost:5000/students \
+  -H "Content-Type: application/json" \
+  -d '{"name": "New Student", "email": "new@berkeley.edu", "major": "CS"}'
+
+# PUT update student
+curl -X PUT http://localhost:5000/students/1 \
+  -H "Content-Type: application/json" \
+  -d '{"major": "Machine Learning"}'
+
+# DELETE student
+curl -X DELETE http://localhost:5000/students/1
+```
+
+## Checkpoints
+
+| Time | Goal |
+|------|------|
+| 0-5 min | Setup: clone, venv, pip install, flask run |
+| 5-15 min | GET /students and GET /students/<id> |
+| 15-25 min | POST /students with validation |
+| 25-35 min | PUT /students/<id> and DELETE /students/<id> |
+| 35-45 min | Extensions or polish |
+
+## Tips
+
+1. **Start with GET** - it's the simplest (no request body)
+2. **Use `request.get_json()`** for POST/PUT to get the JSON body
+3. **Check for None** - students.get() returns None if not found
+4. **Return tuples** - `(data, status_code)` like `(student, 200)`
+5. **Test often** - run curl after each endpoint
+
+## Common Issues
+
+| Issue | Solution |
+|-------|----------|
+| `ModuleNotFoundError: flask` | Activate venv: `source venv/bin/activate` |
+| POST returns None | Add `-H "Content-Type: application/json"` to curl |
+| 404 for everything | Check URL path matches decorator |
+| Changes not showing | Restart Flask (or use `FLASK_DEBUG=1`) |
+
+## Extensions (if you finish early)
+
+1. **Search endpoint**: `GET /students?major=CS` - filter by major
+2. **Pagination**: `GET /students?limit=10&offset=0`
+3. **Validation**: Check email contains `@`
+4. **Error handlers**: Custom JSON responses for 404, 400
+
+## Submitting
+
+At **10:45 AM**, commit and push:
+
 ```bash
-python test_password_tool.py
+git add .
+git commit -m "In-class exploration submission"
+git push
 ```
 
-You should see:
-```
-✓ Test 1: Basic scoring
-✓ Test 2: Weak password detection
-✓ Test 3: Common password detection
-✓ Test 4: Strong password detection
-✓ Test 5: Generator length
-✓ Test 6: Generator character types
-✓ Test 7: Generated passwords are strong
+Then submit your repository URL on bCourses.
 
-Results: 7 passed, 0 failed
-🎉 All tests passed! Great work!
-```
+**Grading**: Pass/No Pass based on engagement. We're looking for evidence you worked on this for 30+ minutes.
 
-## 🎓 Submission
-
-1. Complete both TODO 1 and TODO 2
-2. Ensure `python test_password_tool.py` passes all tests
-3. Commit and push your code
-4. Submit your repository link on bCourses
-
-Good luck!
+**Want to keep working?** Continue after submitting and push your changes later!
